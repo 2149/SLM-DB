@@ -1,0 +1,14 @@
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/db_bench.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/leveldb.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/ff_btree_test.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/pm_stream.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/file_bench.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/install/local.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/memtable_bench.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/install/strip.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/btree_bench.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/edit_cache.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/sanity_check.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/rebuild_cache.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/list_install_components.dir
+/mnt/HDD/xxl/SLM-DB/build/CMakeFiles/install.dir

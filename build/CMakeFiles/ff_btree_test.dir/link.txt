@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3 -Wall  -rdynamic CMakeFiles/ff_btree_test.dir/index/ff_btree_test.cc.o  -o ff_btree_test  -Wl,-rpath,/mnt/HDD/xxl/mypath/lib libleveldb.a -lpthread /mnt/HDD/xxl/mypath/lib/libpmem.so /mnt/HDD/xxl/mypath/lib/libpmemcto.so /mnt/HDD/xxl/mypath/lib/libpmemobj.so /mnt/HDD/xxl/mypath/lib/libpmemlog.so /mnt/HDD/xxl/mypath/lib/libvmem.so 

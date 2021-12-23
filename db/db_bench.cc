@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <cstdio>
 #include <cstdlib>
+#include <unistd.h>
 #include "db/db_impl.h"
 #include "leveldb/cache.h"
 #include "leveldb/db.h"
@@ -573,10 +574,10 @@ public:
         method = &Benchmark::ReadReverse;
       } else if (name == Slice("readrandom")) {
         method = &Benchmark::ReadRandom;
-      } else if (name == Slice("rangequery")) {
-        ranges_ = FLAGS_num / 5;
+      } else if (name == Slice("scanrandom")) {
+        ranges_ = FLAGS_num / FLAGS_range_size / 5; //扫描20%的数据
         range_size_ = FLAGS_range_size;
-        method = &Benchmark::RangeQuery;
+        method = &Benchmark::ScanRandom;
       } else if (name == Slice("readmissing")) {
         method = &Benchmark::ReadMissing;
       } else if (name == Slice("seekrandom")) {
@@ -607,6 +608,8 @@ public:
         HeapProfile();
       } else if (name == Slice("waitcompaction")) {
         method = &Benchmark::WaitCompaction;
+      } else if (name == Slice("clean_cache")) {
+        CleanCache();
       } else if (name == Slice("loadworkload")) {
         std::string trace_name = FLAGS_trace + "/trace_load.csv";
         LoadTrace(trace_name);
@@ -854,6 +857,7 @@ private:
     options.reuse_logs = FLAGS_reuse_logs;
     options.merge_threshold = FLAGS_merge_threshold;
     options.index = CreateBtreeIndex();
+    options.compression = kNoCompression;
     Status s = DB::Open(options, FLAGS_db, &db_);
     if (!s.ok()) {
       fprintf(stderr, "open error: %s\n", s.ToString().c_str());
@@ -961,29 +965,39 @@ private:
     thread->stats.AddMessage(msg);
   }
 
-  void RangeQuery(ThreadState* thread) {
+  void ScanRandom(ThreadState* thread) {
     Log(db_->GetLogger(), "[db_bench] Starting range query");
     ReadOptions options;
     std::string value;
     int64_t bytes = 0;
+    int found = 0;
+    double scanbegin,scanend;
+    
+    double scanTime = 0;
     for (int i = 0; i < ranges_; i++) {
-      const uint64_t k = (thread->rand.Next() % FLAGS_num) - range_size_;
-      const uint64_t l = k + range_size_;
+      const uint64_t k = (thread->rand.Next() % FLAGS_num);
       char begin[100];
       snprintf(begin, sizeof(begin), config::key_format, k);
-      char end[100];
-      snprintf(end, sizeof(end), config::key_format, l);
+      scanbegin=g_env->NowMicros();
       Iterator* iter = db_->NewIterator(options);
       int r = 0;
       for (iter->Seek(begin); r < range_size_ && iter->Valid(); iter->Next()) {
         bytes += iter->key().size() + iter->value().size();
         value = iter->value().ToString();
-        thread->stats.FinishedSingleOp();
         ++r;
       }
+      thread->stats.FinishedSingleOp();
+      scanend=g_env->NowMicros();
+      scanTime += scanend-scanbegin;
+      if (r > 0)
+          found ++;
       delete iter;
     }
+    char msg[100];
+    snprintf(msg, sizeof(msg), "(%d of %d found)", found, ranges_);
+    fprintf(stdout, "scanrandom   :%11.3f micros/op;%11.3f op/s\n",scanTime/ranges_,ranges_/(scanTime*1e-6));//11.3f
     thread->stats.AddBytes(bytes);
+    thread->stats.AddMessage(msg);
   }
 
   void ReadMissing(ThreadState* thread) {
@@ -1135,6 +1149,14 @@ private:
   void WaitCompaction(ThreadState* thread) {
     Log(db_->GetLogger(), "[db_bench] Starting wait compaction");
     db_->WaitComp();
+  }
+
+  void CleanCache() {
+    system("sync");
+    system("echo 3 > /proc/sys/vm/drop_caches");
+    sleep(5);
+    system("free -h");
+    printf("clean cache ok!\n");
   }
 
   void Compact(ThreadState* thread) {

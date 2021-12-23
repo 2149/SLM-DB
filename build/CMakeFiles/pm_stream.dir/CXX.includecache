@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/HDD/xxl/SLM-DB/util/persist_stream.cc
+stdio.h
+-
+unistd.h
+-
+math.h
+-
+float.h
+-
+limits.h
+-
+sys/time.h
+-
+/mnt/HDD/xxl/mypath/include/libvmem.h
+-
+sys/time.h
+-
+
+/mnt/HDD/xxl/mypath/include/libvmem.h
+sys/types.h
+-
+stddef.h
+-
+
