@@ -26,7 +26,7 @@ static constexpr char key_format[] = "%020lu";
 static constexpr int LocalityMagicNumber = 1;
 
 // Number of iterations for one round during locality check
-static constexpr int LocalityCheckRange = 128000;
+static constexpr int LocalityCheckRange = 32000; //2个SST的key的个数
 
 // Min number of unique files to mark for merge during locality check
 static constexpr int LocalityMinFileNumber = 10;

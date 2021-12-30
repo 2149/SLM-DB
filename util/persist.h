@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <libpmem.h>
 
 #define CPU_FREQ_MHZ (2400) // cat /proc/cpuinfo
 #define CAS(_p, _u, _v)  (__atomic_compare_exchange_n (_p, _u, _v, false, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE))
@@ -30,7 +31,8 @@ inline void mfence() {
 
 inline void clflush(const char* data, int len) {
   if (data == nullptr) return;
-  volatile char *ptr = (char *)((unsigned long)data &~(CACHE_LINE_SIZE-1));
+  pmem_persist(data,len);
+ /* volatile char *ptr = (char *)((unsigned long)data &~(CACHE_LINE_SIZE-1));
   mfence();
   for (; ptr< const_cast<volatile char*>(data+len); ptr+=CACHE_LINE_SIZE) {
     unsigned long etsc = read_tsc() + (unsigned long)(WRITE_LATENCY_IN_NS*CPU_FREQ_MHZ/1000);
@@ -38,7 +40,7 @@ inline void clflush(const char* data, int len) {
     while (read_tsc() < etsc)
       cpu_pause();
   }
-  mfence();
+  mfence();*/
 }
 
 #endif // STORAGE_LEVEVDB_UTIL_PMARENA_H_

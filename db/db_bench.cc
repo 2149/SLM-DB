@@ -646,6 +646,8 @@ public:
         }
       } else if (name == Slice("sstables")) {
         PrintStats("leveldb.sstables");
+      } else if (name == Slice("csv")) {
+        PrintStats("leveldb.csv");
       } else {
         if (name != Slice()) {  // No error message for empty name
           fprintf(stderr, "unknown benchmark '%s'\n", name.ToString().c_str());
@@ -966,7 +968,6 @@ private:
   }
 
   void ScanRandom(ThreadState* thread) {
-    Log(db_->GetLogger(), "[db_bench] Starting range query");
     ReadOptions options;
     std::string value;
     int64_t bytes = 0;

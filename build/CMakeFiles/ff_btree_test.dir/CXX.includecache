@@ -153,6 +153,8 @@ cstdlib
 -
 iostream
 -
+libpmem.h
+-
 
 ../util/random.h
 cstdint
